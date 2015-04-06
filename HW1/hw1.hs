@@ -2,7 +2,6 @@ module HW1 where
 
 import Prelude hiding (Enum(..), sum)
 
-
 --
 -- * Part 1: Natural numbers
 --
@@ -34,13 +33,14 @@ four = Succ three
 
 
 -- | The predecessor of a natural number.
---   
+--
 --   >>> pred zero
 --   Zero
---   
+--
 --   >>> pred three
 --   Succ (Succ Zero)
---   
+--
+pred :: Nat -> Nat
 pred = undefined
 
 
@@ -52,8 +52,8 @@ pred = undefined
 --   >>> isZero two
 --   False
 --
+isZero :: Nat -> Bool
 isZero = undefined
-
 
 -- | Convert a natural number to an integer.
 --
@@ -63,8 +63,8 @@ isZero = undefined
 --   >>> toInt three
 --   3
 --
+toInt :: Nat -> Int
 toInt = undefined
-
 
 -- | Add two natural numbers.
 --
@@ -79,7 +79,8 @@ toInt = undefined
 --
 --   >>> add two three == add three two
 --   True
---   
+--
+add :: Nat -> Nat
 add = undefined
 
 
@@ -88,7 +89,7 @@ add = undefined
 --
 --   >>> sub two one
 --   Succ Zero
---   
+--
 --   >>> sub three one
 --   Succ (Succ Zero)
 --
@@ -98,6 +99,7 @@ add = undefined
 --   >>> sub one three
 --   Zero
 --
+sub :: Nat -> Nat
 sub = undefined
 
 
@@ -112,6 +114,7 @@ sub = undefined
 --   >>> gt two two
 --   False
 --
+gt :: Nat -> Bool
 gt = undefined
 
 
@@ -129,6 +132,7 @@ gt = undefined
 --   >>> toInt (mult three three)
 --   9
 --
+mult :: Nat -> Nat
 mult = undefined
 
 
@@ -136,13 +140,14 @@ mult = undefined
 --
 --   >>> sum []
 --   Zero
---   
+--
 --   >>> sum [one,zero,two]
 --   Succ (Succ (Succ Zero))
 --
 --   >>> toInt (sum [one,two,three])
 --   6
 --
+sum :: [Nat] -> Nat
 sum = undefined
 
 
@@ -154,6 +159,7 @@ sum = undefined
 --   >>> toInt (sum (take 100 odds))
 --   10000
 --
+odds :: [Nat] -> [Nat]
 odds = undefined
 
 
@@ -167,7 +173,7 @@ odds = undefined
 --
 --   >>> compress [1,1,1,2,3,3,3,1,2,2,2,2]
 --   [(3,1),(1,2),(3,3),(1,1),(4,2)]
--- 
+--
 --   >>> compress "Mississippi"
 --   [(1,'M'),(1,'i'),(2,'s'),(1,'i'),(2,'s'),(1,'i'),(2,'p'),(1,'i')]
 --
@@ -179,6 +185,6 @@ compress = undefined
 --
 --   >>> decompress [(5,'a'),(3,'b'),(4,'c'),(1,'a'),(2,'b')]
 --   "aaaaabbbccccabb"
---  
+--
 decompress :: [(Int,a)] -> [a]
 decompress = undefined
