@@ -2,7 +2,8 @@ module Hello where
 
 import Prelude
 
--- | Factorial for reallly reallllllly big numbers (i can do factorial 10000)
+-- | Factorial for reallly reallllllly big numbers
+-- (i can do factorial 10000)
 factorial :: Integer -> Integer
 factorial n = product[1..n]
 
