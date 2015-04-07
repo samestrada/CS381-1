@@ -142,11 +142,11 @@ product'   = foldr (*) 1
 -- | other work
 head :: [a] -> a
 head [] = error "empty list!"
-head (x:xs) = x
+head (x:_) = x
 
 tail :: [a] -> a
 tail [] = error "empty list!"
-tail (x:xs) = xs
+tail (_:xs) = Basics.tail xs
 
 last :: [a] -> a
 last = Basics.head . reverse
@@ -154,4 +154,4 @@ last = Basics.head . reverse
 last' :: [a] -> a
 last' [] = error "empty list!"
 last' (x:[]) = x
-last' (x:xs) = Basics.last xs
+last' (_:xs) = Basics.last xs
