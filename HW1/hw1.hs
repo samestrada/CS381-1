@@ -1,7 +1,7 @@
 module HW1 where
 
 import Prelude hiding (Enum(..), sum)
-
+import Data.List hiding (sum)
 --
 -- * Part 1: Natural numbers
 --
@@ -108,6 +108,12 @@ sub Zero _ = Zero
 sub n Zero = n
 sub n m = sub (pred n) (pred m)
 
+-- Extracurricular function writing
+-- Equals
+eq :: Nat -> Nat -> Bool
+eq Zero Zero = True
+eq (Succ n) (Succ m) = eq n m
+eq _ _ = False
 
 -- | Is the left value greater than the right?
 --
@@ -141,8 +147,10 @@ gt n m = gt (pred n) (pred m)
 --   9
 --
 mult :: Nat -> Nat -> Nat
-mult = undefined
-
+mult Zero _ = Zero
+mult _ Zero = Zero
+mult m n = if n == Succ Zero then add m Zero
+           else add m (mult m (pred n))
 
 -- | Compute the sum of a list of natural numbers.
 --
@@ -156,7 +164,8 @@ mult = undefined
 --   6
 --
 sum :: [Nat] -> Nat
-sum = undefined
+sum [] = Zero
+sum (x:xs) = add x (sum xs)
 
 
 -- | An infinite list of all of the *odd* natural numbers, in order.
@@ -186,7 +195,7 @@ odds = undefined
 --   [(1,'M'),(1,'i'),(2,'s'),(1,'i'),(2,'s'),(1,'i'),(2,'p'),(1,'i')]
 --
 compress :: Eq a => [a] -> [(Int,a)]
-compress = undefined
+compress = map (\x -> (length x, head x)) . group
 
 
 -- | Convert a run-length list back into a regular list.
@@ -195,4 +204,4 @@ compress = undefined
 --   "aaaaabbbccccabb"
 --
 decompress :: [(Int,a)] -> [a]
-decompress = undefined
+decompress = concatMap (uncurry replicate)
