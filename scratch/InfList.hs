@@ -4,13 +4,17 @@ module InfList where
 import Prelude hiding (map,succ,zipWith)
 
 
-
 -- | An infinite list of ones.
 --   >>> take 5 ones
 --   [1,1,1,1,1]
 ones :: [Int]
 ones = 1 : ones
 
+-- | Map a function over all of the elements of a list.
+--   (In the Prelude)
+map :: (a -> b) -> [a] -> [b]
+map f []     = []
+map f (a:as) = f a : map f as
 
 
 -- | The natural numbers.
@@ -19,11 +23,10 @@ ones = 1 : ones
 nats :: [Int]
 nats = 0 : map succ nats
 
--- | Map a function over all of the elements of a list.
---   (In the Prelude)
-map :: (a -> b) -> [a] -> [b]
-map f []     = []
-map f (a:as) = f a : map f as
+-- nats = 0 : map succ (0 : map succ (0 : map succ nats))
+-- nats = 0 : succ 0 : succ (map succ (0 : map succ nats (0 : map succ nats)))
+-- nats = 0 : 1 succ (map succ ( 0 ; map succ (0 : mapp succ nats)))
+
 
 -- | Increment an integer.
 --   (In the Prelude)
@@ -36,14 +39,14 @@ succ n = n + 1
 --   >>> take 5 evens
 --   [0,2,4,6,8]
 evens :: [Int]
-evens = undefined
+evens = map (*2) nats
 
 
 
 -- | The Fibonacci sequence.
 --   >>> take 7 fibs
 --   [1,1,2,3,5,8,13]
-fibs :: [Int]
+fibs :: [Integer]
 fibs = 1 : 1 : zipWith (+) fibs (tail fibs)
 
 -- head (a:_)  = a

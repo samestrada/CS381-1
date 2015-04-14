@@ -2,6 +2,9 @@ module HW1 where
 
 import Prelude hiding (Enum(..), sum)
 import Data.List hiding (sum)
+
+-- Name: Brandon Burgess
+
 --
 -- * Part 1: Natural numbers
 --
@@ -177,8 +180,7 @@ sum (x:xs) = add x (sum xs)
 --   10000
 --
 odds :: [Nat] -> [Nat]
-odds = undefined
-
+odds = Zero : map (Succ odds)
 
 
 --
