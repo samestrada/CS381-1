@@ -180,7 +180,7 @@ sum (x:xs) = add x (sum xs)
 --   10000
 --
 odds :: [Nat] -> [Nat]
-odds = Zero : map (Succ odds)
+odds = undefined
 
 
 --
