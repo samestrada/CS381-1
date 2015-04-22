@@ -98,10 +98,32 @@ steps n = step n ++ steps (n-1)
 -- ********** PART 5 **********
 --
 
--- macros :: Prog -> [Macro]
--- macros (Define s ["a"] [[p]]) = s
+macros :: Prog -> [Macro]
+macros (Call "s" [Pen x, Move(...)]) = s
 -- macros _ = []
 
+--
+-- ********** PART 6 **********
+--
+
+pretty :: Prog -> String
+pretty (p:ps) = if (length ps) == 0
+then prettycmd p
+else prettycmd p ++ ", " ++ pretty ps
+pretty _ = []
+
+prettycmd :: Cmd -> String
+prettycmd (Call (s:ss) (x:xs)) = "Call " ++ (s:ss) ++ " (" ++ prettyforarg (x:xs) ++ ")"
+prettycmd (Pen x) = if x == Down then "Pen Down" else "Pen Up"
+prettycmd (Move((Lit x), (Lit y))) = "Move " ++ "(" ++ prettyforarg ((Lit x):(Lit y):[]) ++ ")"
+
+--prettycmd (Define (s:ss) (Ref v:vs) (c:cs)) = "Define " ++ (s:ss) ++ prettyforarg (v:vs) ++ prettycmd (c:cs)
+
+prettyforarg :: [Expr] -> String
+prettyforarg (Ref v:vs) = if (length vs) == 0 then v
+                        else v ++ ", " ++ prettyforarg vs
+prettyforarg (Lit n:ns) = if (length ns) == 0 then (show n)
+                        else (show n) ++ ", " ++ prettyforarg ns
 
 
 
