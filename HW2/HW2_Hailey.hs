@@ -1,7 +1,7 @@
 
 -- ***** Hailey Palmiter     931-958-219 *****
--- ***** Layne Nolli                     *****
--- ***** Kirk Stennett                   *****
+-- ***** Layne Nolli         931-823-301 *****
+-- ***** Kirk Stennett       931-775-870 *****
 
 -- **************************************
 
@@ -99,31 +99,34 @@ steps n = step n ++ steps (n-1)
 --
 
 macros :: Prog -> [Macro]
-macros (Call "s" [Pen x, Move(...)]) = s
--- macros _ = []
+macros ((Define m _ _):xs) = m : macros xs
+macros ((Pen _):xs) = macros xs
+macros ((Move _):xs) =  macros xs
+macros ((Call _ _):xs) = macros xs
+macros _ = []
 
 --
 -- ********** PART 6 **********
 --
 
+-- FIXME:
+-- TODO: *Define needs to have InpV and quotes removed and be prettier
+--       *Define also is missing a trailing newline
+--       *Solve why there is a trailing semicolon
+
 pretty :: Prog -> String
-pretty (p:ps) = if (length ps) == 0
-then prettycmd p
-else prettycmd p ++ ", " ++ pretty ps
-pretty _ = []
+pretty ((Define m v p):xs) = if (length xs) == 0 then pretty p ++ "; "
+            else ("Define " ++ show m ++ show v ++ pretty p ++ "; \n"++ pretty xs)
 
-prettycmd :: Cmd -> String
-prettycmd (Call (s:ss) (x:xs)) = "Call " ++ (s:ss) ++ " (" ++ prettyforarg (x:xs) ++ ")"
-prettycmd (Pen x) = if x == Down then "Pen Down" else "Pen Up"
-prettycmd (Move((Lit x), (Lit y))) = "Move " ++ "(" ++ prettyforarg ((Lit x):(Lit y):[]) ++ ")"
+pretty ((Pen m):xs) = if (length xs) == 0 then "Pen " ++ show m ++ "; "
+            else ("Pen " ++ show m ++ "; \n" ++ pretty xs)
 
---prettycmd (Define (s:ss) (Ref v:vs) (c:cs)) = "Define " ++ (s:ss) ++ prettyforarg (v:vs) ++ prettycmd (c:cs)
+pretty ((Move ((Lit x),(Lit y))):xs) = if (length xs) == 0 then "Move (" ++ show x ++ ", " ++ show y ++ "); "
+            else ("Move (" ++ show x ++ ", " ++ show y ++ "); \n" ++ pretty xs)
 
-prettyforarg :: [Expr] -> String
-prettyforarg (Ref v:vs) = if (length vs) == 0 then v
-                        else v ++ ", " ++ prettyforarg vs
-prettyforarg (Lit n:ns) = if (length ns) == 0 then (show n)
-                        else (show n) ++ ", " ++ prettyforarg ns
+pretty ((Call x y):xs) = if (length xs) == 0 then "Call (" ++ show x ++ ", " ++ show y ++ "); "
+            else ("Call (" ++ show x ++ ", " ++ show y ++ "); \n" ++ pretty xs)
+pretty _ = ""
 
 
 
