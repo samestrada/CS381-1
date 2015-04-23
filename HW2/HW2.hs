@@ -1,5 +1,5 @@
 -- Name: Brandon Burgess
--- ID: ***-**-****
+-- ID: *** *** ***
 
 module HW2 where
 
@@ -41,6 +41,11 @@ line = Define "line" ["x1", "x2", "y1", "y2"]
      Move (InpV "x2", InpV "x2"), Pen Up]
 
 --Part 3
+-- This Macro will draw an X beginning at x,y with height h and width w
+-- This will conform to the following concrete syntax
+-- Define nix [x,y,w,h]
+-- Call line (x, y, x+w, h+y );
+-- Call line (x+w, y, w, h+y );
 nix :: Cmd
 nix = Define "nix" ["x", "y", "w", "h"]
      [Call "line" [InpV "x", InpV "y",
@@ -83,16 +88,16 @@ macros _ = []
 toStrFroExpr :: [Expr] -> String
 toStrFroExpr ((InpV x):xs) = 
             if (length xs) == 0
-                then show x ++ " "
-            else show x ++ ", " ++ toStrFroExpr xs
+                then x
+            else x ++ ", " ++ toStrFroExpr xs
 toStrFroExpr ((InpN x):xs) = 
             if (length xs) == 0
-                then show x ++ " "
+                then show x
             else show x ++ ", " ++ toStrFroExpr xs
 toStrFroExpr ((Add (InpV x) (InpV y)):xs) =
             if (length xs) == 0
-                then show x ++ "+" ++ show y ++ " "
-            else show x ++ "+" ++ show y ++ ", " ++ toStrFroExpr xs
+                then x ++ "+" ++ y
+            else x ++ "+" ++ y ++ ", " ++ toStrFroExpr xs
 toStrFroExpr _ = ""
 
 -- The "real" part of part 6
@@ -101,9 +106,9 @@ pretty :: Prog -> String
 pretty ((Define m v p):xs) =
             if (length xs) == 0
                 then pretty p ++ "; "
-            else ("Define " ++ show m ++ " " ++ show v
+            else "Define " ++ m ++ " " ++ (show v)
                 ++ "{\n" ++ pretty p ++ "\n}"
-                ++ "; \n" ++ pretty xs)
+                ++ "; \n" ++ pretty xs
 
 pretty ((Pen m):xs) =
             if (length xs) == 0
@@ -117,13 +122,13 @@ pretty ((Move ((InpN x),(InpN y))):xs) =
 
 pretty ((Move ((InpV x),(InpV y))):xs) =
             if (length xs) == 0
-                then "Move (" ++ show x ++ ", " ++ show y ++ "); "
-            else ("Move (" ++ show x ++ ", " ++ show y ++ "); \n" ++ pretty xs)
+                then "Move (" ++ x ++ ", " ++ y ++ "); "
+            else ("Move (" ++ x ++ ", " ++ y ++ "); \n" ++ pretty xs)
 
 pretty ((Call x y):xs) =
             if (length xs) == 0
-                then "Call (" ++ show x ++ ", " ++ toStrFroExpr y ++ "); "
-            else ("Call (" ++ show x ++ ", " ++ toStrFroExpr y ++ "); \n"
+                then "Call " ++ x ++ " (" ++ toStrFroExpr y ++ "); "
+            else ("Call " ++ x ++ " (" ++ toStrFroExpr y ++ "); \n"
                 ++ pretty xs)
 
 pretty _ = ""
