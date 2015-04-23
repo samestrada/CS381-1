@@ -1,6 +1,6 @@
 module HW2 where
 
-import Prelude hiding (Enum(..), sum)
+import Prelude
 
 type Numb = Int
 type Var = String
@@ -41,21 +41,43 @@ nix = Define "nix" ["x", "y", "w", "h"]
      [Call "line" [InpV "x", InpV "w", InpV "y", InpV "h"],
      Call "line" [InpV "x", InpV "y", InpV "w", InpV "h"]]
 
-
 step :: Int -> Prog
 step x = [Pen Up, Move (InpN x, InpN x), Pen Down, Move (InpN x, InpN (x+1)),
           Move (InpN (x+1), InpN (x+1)), Pen Up]
 
 steps :: Int -> Prog
 steps 0 = []
-steps _ = undefined 
-        {-I wanna do something like:
-        step x steps (x-1)
-        but for some reason GHC applies all x steps and (x-1) to step
-        which doesn't make any sense to me-}
+steps x = step 1 ++ steps (x-1)
+
+-- Using this to test macros
+step_test :: Int -> Prog
+step_test x = [Pen Up, Move (InpN x, InpN x), Pen Down, Move (InpN x, InpN (x+1)),
+              Move (InpN (x+1), InpN (x+1)), Pen Up, 
+              (Define "line" ["x1", "x2", "y1", "y2"]
+              [Pen Up, Move (InpV "x1", InpV "y1"), Pen Down,
+              Move (InpV "x2", InpV "x2"), Pen Up])]
 
 macros :: Prog -> [Macro]
-macros = undefined
+macros ((Define m _ _):xs) = m : macros xs
+macros ((Pen _):xs) = macros xs
+macros ((Move _):xs) =  macros xs
+macros ((Call _ _):xs) = macros xs
+macros _ = []
 
+-- FIXME:
+-- TODO: *Define needs to have InpV and quotes removed and be prettier
+--       *Define also is missing a trailing newline
+--       *Solve why there is a trailing semicolon
+--       *Remove InpN from from move
 pretty :: Prog -> String
-pretty = undefined
+pretty ((Define m v p):xs) = ("Define " ++ show m ++ show v
+        ++ pretty p ++ "; \n"++ pretty xs)
+
+pretty ((Pen m):xs) = ("Pen " ++ show m ++ "; \n" ++ pretty xs)
+
+pretty ((Move (x, y)):xs) = ("Move (" ++ show x ++ ", " ++ show y 
+        ++ "); \n" ++ pretty xs)
+
+pretty ((Call x y):xs) = ("Call (" ++ show x ++ ", " ++ show y
+        ++ "); \n" ++ pretty xs)
+pretty _ = ""
