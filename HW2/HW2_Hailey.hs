@@ -128,14 +128,3 @@ pretty ((Call x y):xs) = if (length xs) == 0 then "Call (" ++ show x ++ ", " ++ 
             else ("Call (" ++ show x ++ ", " ++ show y ++ "); \n" ++ pretty xs)
 pretty _ = ""
 
-
-
-
-
-
-
-
-
-
-
-
