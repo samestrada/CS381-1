@@ -12,6 +12,9 @@ import Prelude hiding (even,odd,sum,product,map,foldr)
 -- * doctest
 
 
+-- <-Line comment
+-- {-Block Comment-}
+
 ---------------------
 -- Getting Started --
 ---------------------
@@ -50,7 +53,6 @@ isZero _ = False
 -------------------------
 -- Lists and Recursion --
 -------------------------
-
 -- * lists and strings
 --   * cons, nil, and syntactic sugar
 --   * recursive functions

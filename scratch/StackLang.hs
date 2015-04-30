@@ -41,7 +41,7 @@ myProg = [LitI 3, LitI 4, EQ, If [LitI 5, LitI 6, Add] [LitB False]]
 --    and generates a StackLang program that adds both x and y to
 --    the number on the top of the stack
 genAdd2 :: Int -> Int -> Prog
-genAdd2 x y = [LitI x, LitI y, Add, Add]x11ix
+genAdd2 x y = [LitI x, LitI y, Add, Add]
 
 
 -- 4. Write a Haskell function that takes a list of integers and
