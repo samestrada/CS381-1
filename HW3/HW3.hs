@@ -1,13 +1,8 @@
 module HW3 where
 
-
---
 -- * Part 1: Simple Stack Language
---
 
---
 -- ** Syntax
---
 
 -- | A program is a list of commands.
 type Prog = [Cmd]
@@ -20,15 +15,11 @@ data Cmd = Push Int      -- push an int onto the stack
          | Add           -- add the top two ints on the stack
   deriving (Eq,Show)
 
-
---
 -- ** Semantics
---
 
 -- | A stack of integers.
 -- | This is our "environment, if you will
 type Stack = [Int]
-
 
 -- | Denotational semantics of a command.
 --
@@ -66,12 +57,12 @@ type Stack = [Int]
 --   Nothing
 
 cmd :: Cmd -> Stack -> Maybe Stack
-cmd (Push i) xs = Just ([i] ++ xs)
-cmd (Pop) (_:xs) = Just xs
-cmd (Dup) (x:xs) = Just ([x,x] ++ xs)
+cmd (Push i) xs     = Just (i : xs)
+cmd (Pop) (_:xs)    = Just xs
+cmd (Dup) (x:xs)    = Just ([x,x] ++ xs)
 cmd (Swap) (x:y:xs) = Just (y:x:xs)
-cmd (Add) (x:y:xs) = Just ((x+y):xs)
-cmd _ _ = Nothing
+cmd (Add) (x:y:xs)  = Just ((x+y):xs)
+cmd _ _             = Nothing
 
 -- | Denotational semantics of a program.
 --
@@ -90,27 +81,19 @@ cmd _ _ = Nothing
 --   >>> prog [Pop,Dup] [5]
 --   Nothing
 
--- First cmd must be Push, second cmd can be Pop, Dup, or Push, then any cmd is fine
 prog :: [Cmd] -> Stack -> Maybe Stack
-prog (f:[]) y = cmd f y
-prog (x:xs) ys = prog' xs (cmd x ys)
-prog [] _ = Nothing
-prog' :: [Cmd] -> Maybe Stack -> Maybe Stack
-prog' f (Just xs) = prog f xs
-prog' _ _ = Nothing
+prog ([x]) y  = cmd x y
+prog (x:xs) ys = prog xs (unMaybe (cmd x ys))
+prog [] _      = Nothing
 
 -- | Evaluate a program starting with an empty stack.
 run :: Prog -> Stack -> Maybe Stack
 run x [] = prog x []
-run _ _ = Nothing
+run _ _  = Nothing
 
---
 -- * Part 2: Adding Macros
---
 
---
 -- ** Syntax
---
 
 -- | A macro name.
 type Name = String
@@ -125,10 +108,15 @@ data XCmd = Define Name XProg   -- define a macro
   deriving (Eq,Show)
 
 -- Some aliases for basic commands.
+push   :: Int -> XCmd
 push n = Basic (Push n)
+pop    :: XCmd
 pop    = Basic Pop
+dup    :: XCmd
 dup    = Basic Dup
+swap   :: XCmd
 swap   = Basic Swap
+add    :: XCmd
 add    = Basic Add
 
 -- Some example macro definitions:
@@ -146,10 +134,7 @@ triple = Define "triple" [dup,dup,add,add]
 trouble :: XCmd
 trouble = Define "trouble" [dup, Call "triple", swap, Call "double"]
 
-
---
 -- ** Semantics
---
 
 -- | Associates macro names with their definitions.
 type Macros = [(Name,XProg)]
@@ -160,18 +145,15 @@ type State = (Macros,Stack)
 
 -- | Semantics of an extended command.
 xcmd :: XCmd -> State -> Maybe State
-xcmd (Basic c) (m,s) = Just (m, xcmd' (cmd c s))
+xcmd (Basic c) (m,s)    = Just (m, unMaybe (cmd c s))
 xcmd (Define n p) (m,s) = Just (m ++ [(n,p)], s)
-xmcd (Call n) (m,s) = undefined
-xmcd _ _ = Nothing
+xcmd (Call n) (m,s)     = xprog (unMaybe (lookup n m)) (m,s)
 
-xcmd' :: Maybe t -> t
-xcmd' (Just x) = x
-xcmd' Nothing = undefined
 
 xprog :: XProg -> State -> Maybe State
-xprog = undefined
-
+xprog ([x]) y  = xcmd x y
+xprog (x:xs) ys = xprog xs (unMaybe (xcmd x ys))
+xprog [] _      = Nothing
 
 -- | Evaluate a program starting with an empty stack.
 --   
@@ -187,5 +169,11 @@ xprog = undefined
 --   >>> xrun [push 3,trouble,Call "trouble"]
 --   Nothing
 --
+
 xrun :: XProg -> Maybe Stack
-xrun = undefined
+xrun x = Just (snd (unMaybe (xprog x ([],[]))))
+
+-- This maybe a function, I don't know anymore.
+unMaybe :: Maybe t -> t
+unMaybe (Just x) = x
+unMaybe _ = undefined
