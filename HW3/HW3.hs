@@ -26,6 +26,7 @@ data Cmd = Push Int      -- push an int onto the stack
 --
 
 -- | A stack of integers.
+-- | This is our "environment, if you will
 type Stack = [Int]
 
 
@@ -63,9 +64,14 @@ type Stack = [Int]
 --
 --   >>> cmd Add [1]
 --   Nothing
---
-cmd = undefined
 
+cmd :: Cmd -> Stack -> Maybe Stack
+cmd (Push i) xs = Just ([i] ++ xs)
+cmd (Pop) (_:xs) = Just xs
+cmd (Dup) (x:xs) = Just ([x,x] ++ xs)
+cmd (Swap) (x:y:xs) = Just (y:x:xs)
+cmd (Add) (x:y:xs) = Just ((x+y):xs)
+cmd _ _ = Nothing
 
 -- | Denotational semantics of a program.
 --
@@ -83,13 +89,20 @@ cmd = undefined
 --
 --   >>> prog [Pop,Dup] [5]
 --   Nothing
---
-prog = undefined
 
+-- First cmd must be Push, second cmd can be Pop, Dup, or Push, then any cmd is fine
+prog :: [Cmd] -> Stack -> Maybe Stack
+prog (f:[]) y = cmd f y
+prog (x:xs) ys = prog' xs (cmd x ys)
+prog [] _ = Nothing
+prog' :: [Cmd] -> Maybe Stack -> Maybe Stack
+prog' f (Just xs) = prog f xs
+prog' _ _ = Nothing
 
 -- | Evaluate a program starting with an empty stack.
-run = undefined
-
+run :: Prog -> Stack -> Maybe Stack
+run x [] = prog x []
+run _ _ = Nothing
 
 --
 -- * Part 2: Adding Macros
@@ -147,10 +160,15 @@ type State = (Macros,Stack)
 
 -- | Semantics of an extended command.
 xcmd :: XCmd -> State -> Maybe State
-xcmd = undefined
+xcmd (Basic c) (m,s) = Just (m, xcmd' (cmd c s))
+xcmd (Define n p) (m,s) = Just (m ++ [(n,p)], s)
+xmcd (Call n) (m,s) = undefined
+xmcd _ _ = Nothing
 
+xcmd' :: Maybe t -> t
+xcmd' (Just x) = x
+xcmd' Nothing = undefined
 
--- | Semantics of an extended program.
 xprog :: XProg -> State -> Maybe State
 xprog = undefined
 
