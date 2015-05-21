@@ -39,7 +39,7 @@ x3 = Let "x" (Lit 3) (Add (Let "x" (Lit 4) (Ref "x")) (Ref "x"))
 --
 
 type Env = [(Var,Int)]
-type Domain = Env -> Maybe Int 
+type Domain = Env -> Maybe Int
 
 --
 -- 3. Define Semantic function

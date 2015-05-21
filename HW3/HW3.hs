@@ -145,6 +145,16 @@ type State = (Macros,Stack)
 
 -- | Semantics of an extended command.
 xcmd :: XCmd -> State -> Maybe State
+xcmd (Basic c)  (m, []) = case c of
+                          Swap -> Nothing
+                          Dup -> Nothing
+                          Pop -> Nothing
+                          Add -> Nothing
+                          Push x -> Just (m, unMaybe (cmd (Push x) []))
+xcmd (Basic c) (m, [n]) = case c of
+                          Swap -> Nothing
+                          Add -> Nothing
+                          _ -> Just (m, unMaybe (cmd c [n]))
 xcmd (Basic c) (m,s)    = Just (m, unMaybe (cmd c s))
 xcmd (Define n p) (m,s) = Just (m ++ [(n,p)], s)
 xcmd (Call n) (m,s)     = xprog (unMaybe (lookup n m)) (m,s)
@@ -176,4 +186,4 @@ xrun x = Just (snd (unMaybe (xprog x ([],[]))))
 -- This maybe a function, I don't know anymore.
 unMaybe :: Maybe t -> t
 unMaybe (Just x) = x
-unMaybe _ = undefined
+unMaybe (Nothing) = undefined

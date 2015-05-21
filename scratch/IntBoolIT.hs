@@ -17,6 +17,7 @@ data Exp = Lit Int
 --
 -- 2. Define the syntax of types
 --
+--data Val = I Int | B Bool | TypeError
 
 data Type = TInt | TBool | TypeError
     deriving(Eq, Show)
@@ -26,7 +27,7 @@ data Type = TInt | TBool | TypeError
 --
 
 typeOf :: Exp -> Type
-typeOf (Lit i)   = TInt
+typeOf (Lit _)   = TInt
 typeOf (Not e)   = case typeOf e of 
                     TBool -> TBool
                     _     -> TypeError
