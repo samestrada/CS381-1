@@ -48,39 +48,39 @@ draw p = let (_,ls) = prog p start in toHTML ls
 --
 cmd :: Cmd -> State -> (State, Maybe Line)
 cmd (Pen Down) (_,(x,y)) = ((Down,(x,y)), Nothing)
-cmd (Pen Up) (_,(x,y)) = ((Up,(x,y)), Nothing)
+cmd (Pen Up) (_,(x,y))   = ((Up,(x,y)), Nothing)
 cmd (Move x y) (m,(a,b)) = case m of
-                           Up -> ((Up,(x,y)), Nothing)
+                           Up   -> ((Up,(x,y)), Nothing)
                            Down -> ((Down, (x,y)), (Just ((a,b),(x,y))))
 
 getLines :: Prog -> State -> [Line]
-getLines [] (_,_)  = []
-getLines [x] (i,y) = case x of
-                     Pen Down -> []
-                     Pen Up -> []
-                     Move u v -> case i of
-                                 Up -> []
-                                 Down -> [(y,(u,v))]
+getLines [] (_,_)     = []
+getLines [x] (i,y)    = case x of
+                        Pen Down -> []
+                        Pen Up   -> []
+                        Move u v -> case i of
+                                    Up   -> []
+                                    Down -> [(y,(u,v))]
 getLines (x:xs) (i,y) = case x of
-                 Pen Down -> getLines xs (Down, y)
-                 Pen Up -> getLines xs (Up, y)
-                 Move u v -> case i of
-                            Up -> getLines xs (Up, (u,v))
-                            Down ->  (y,(u,v)):(getLines xs (Down, (u,v)))
+                        Pen Down -> getLines xs (Down, y)
+                        Pen Up   -> getLines xs (Up, y)
+                        Move u v -> case i of
+                                    Up   -> getLines xs (Up, (u,v))
+                                    Down -> (y,(u,v)):(getLines xs (Down, (u,v)))
 
 
 getFinalState :: Prog -> State -> State
-getFinalState [] (i,y)  = (i,y)
-getFinalState [x] (i,y) = case x of
-                     Pen Down -> getFinalState [] (Down,y)
-                     Pen Up -> getFinalState [] (Up,y)
-                     Move u v -> (i,(u,v))
+getFinalState [] (i,y)     = (i,y)
+getFinalState [x] (i,y)    = case x of
+                             Pen Down -> getFinalState [] (Down,y)
+                             Pen Up   -> getFinalState [] (Up,y)
+                             Move u v -> (i,(u,v))
 getFinalState (x:xs) (i,y) = case x of
-                 Pen Down -> getFinalState xs (Down, y)
-                 Pen Up -> getFinalState xs (Up, y)
-                 Move u v -> case i of
-                            Up -> getFinalState xs (Up, (u,v))
-                            Down ->  getFinalState xs (Down, (u,v))
+                             Pen Down -> getFinalState xs (Down, y)
+                             Pen Up   -> getFinalState xs (Up, y)
+                             Move u v -> case i of
+                                         Up   -> getFinalState xs (Up, (u,v))
+                                         Down -> getFinalState xs (Down, (u,v))
 
 
 -- | Semantic function for Prog.
